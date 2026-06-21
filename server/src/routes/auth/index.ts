@@ -185,4 +185,59 @@ router.post('/register', async (req: Request, res: Response) => {
   }
 });
 
+router.post('/google', async (req: Request, res: Response) => {
+  try {
+    const { email, name } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const normalizedEmail = String(email).trim().toLowerCase();
+
+    // Check if user exists, otherwise create them
+    let user = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+      select: {
+        id: true,
+        email: true,
+        name: true
+      }
+    });
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          name: name || 'Google User',
+          email: normalizedEmail,
+          passwordHash: null
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true
+        }
+      });
+    }
+
+    const token = generateToken({
+      id: user.id,
+      email: user.email,
+      name: user.name || 'User'
+    });
+
+    return res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name
+      }
+    });
+  } catch (error: any) {
+    console.error('Google login error:', error);
+    return res.status(500).json({ error: error?.message || 'Google authentication failed' });
+  }
+});
+
 export default router;

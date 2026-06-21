@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { storeToken, storeUser, type AuthResponse } from '../../utils/auth';
 import { getApiBaseUrl } from '../../config/env';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../../config/firebase';
 import AuthScreen from './AuthScreen';
 
 const apiBaseUrl = getApiBaseUrl();
@@ -61,6 +63,36 @@ export default function SignupPage() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const firebaseUser = result.user;
+
+      if (!firebaseUser.email) {
+        throw new Error('No email returned from Google authentication');
+      }
+
+      const response = await axios.post<AuthResponse>(`${apiBaseUrl}/auth/google`, {
+        email: firebaseUser.email,
+        name: firebaseUser.displayName || 'Google User'
+      });
+
+      const { token, user } = response.data;
+
+      storeToken(token);
+      storeUser(user);
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Google Auth Error:', error);
+      setErrorMessage(error?.response?.data?.error || error?.message || 'Google sign-in failed.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AuthScreen
       mode="signup"
@@ -79,6 +111,7 @@ export default function SignupPage() {
       onPasswordChange={setPassword}
       onNameChange={setName}
       onSubmit={handleSubmit}
+      onGoogleSignIn={handleGoogleSignIn}
     />
   );
 }
