@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -13,7 +13,13 @@ import {
   Search,
   Menu,
   Sun,
-  Moon
+  Moon,
+  CreditCard,
+  Zap,
+  Activity,
+  Clock,
+  TrendingUp,
+  CheckCircle
 } from 'lucide-react';
 import { cn } from '../utils/theme';
 import { useTheme } from '../hooks/useTheme';
@@ -30,10 +36,29 @@ const SIDEBAR_ITEMS = [
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const user = getUser();
   const { theme, toggleTheme } = useTheme();
+
+  // Close notification panel on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setNotificationOpen(false);
+      }
+    };
+
+    if (notificationOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [notificationOpen]);
 
   const handleLogout = () => {
     clearAuth();
@@ -170,14 +195,126 @@ export default function DashboardLayout() {
                   <Moon className="w-5 h-5" />
                 )}
               </button>
-              <button
-                className="metal-button rounded-full p-2 text-gray-200 hover:text-white relative transition-colors"
-                aria-label="Notifications"
-                title="Notifications"
-              >
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full animate-pulse" />
-              </button>
+              <div className="relative" ref={notificationRef}>
+                <button
+                  onClick={() => setNotificationOpen(!notificationOpen)}
+                  className="metal-button rounded-full p-2 text-gray-200 hover:text-white relative transition-colors"
+                  aria-label="Notifications"
+                  title="Notifications"
+                >
+                  <Bell className="w-5 h-5" />
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full animate-pulse" />
+                </button>
+
+                {/* Notification & Account Panel */}
+                {notificationOpen && (
+                  <div className="notification-panel absolute right-0 top-full mt-3 w-80 sm:w-96 glass-card rounded-2xl shadow-2xl border border-white/10 overflow-hidden z-50">
+                    {/* Panel Header */}
+                    <div className="px-5 py-4 border-b border-white/10 bg-black/30">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-bold text-white uppercase tracking-wide">Account Overview</h3>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" />
+                          Active
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">{user?.email || 'user@example.com'}</p>
+                    </div>
+
+                    <div className="px-5 py-4 space-y-4">
+                      {/* Current Plan */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="w-4 h-4 text-primary" />
+                          <span className="text-sm text-gray-300">Current Plan</span>
+                        </div>
+                        <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-primary/20 text-primary">PRO</span>
+                      </div>
+
+                      {/* Subscription Status */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="w-4 h-4 text-emerald-400" />
+                          <span className="text-sm text-gray-300">Subscription</span>
+                        </div>
+                        <span className="text-xs text-emerald-400 font-semibold">Active</span>
+                      </div>
+
+                      {/* Remaining Credits */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-4 h-4 text-yellow-400" />
+                          <span className="text-sm text-gray-300">Remaining Credits</span>
+                        </div>
+                        <span className="text-sm text-white font-semibold">247</span>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="border-t border-white/10" />
+
+                      {/* Tokens Used */}
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="flex items-center gap-2">
+                            <Activity className="w-4 h-4 text-blue-400" />
+                            <span className="text-sm text-gray-300">Tokens Used</span>
+                          </div>
+                          <span className="text-xs text-gray-400">45,200 / 100,000</span>
+                        </div>
+                        <div className="w-full bg-black/30 h-2 rounded-full overflow-hidden">
+                          <div className="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full transition-all" style={{ width: '45%' }} />
+                        </div>
+                        <div className="flex justify-between mt-1">
+                          <span className="text-[10px] text-gray-400">45.2% used</span>
+                          <span className="text-[10px] text-gray-400">54,800 remaining</span>
+                        </div>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="border-t border-white/10" />
+
+                      {/* Daily & Monthly Usage */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="rounded-xl bg-black/30 border border-white/10 p-3">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
+                            <span className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Daily</span>
+                          </div>
+                          <p className="text-lg font-bold text-white">1,240</p>
+                          <p className="text-[10px] text-gray-400">tokens today</p>
+                        </div>
+                        <div className="rounded-xl bg-black/30 border border-white/10 p-3">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <TrendingUp className="w-3.5 h-3.5 text-pink-400" />
+                            <span className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Monthly</span>
+                          </div>
+                          <p className="text-lg font-bold text-white">45,200</p>
+                          <p className="text-[10px] text-gray-400">tokens this month</p>
+                        </div>
+                      </div>
+
+                      {/* Last Activity */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm text-gray-300">Last Activity</span>
+                        </div>
+                        <span className="text-xs text-gray-400">Just now</span>
+                      </div>
+                    </div>
+
+                    {/* Panel Footer */}
+                    <div className="px-5 py-3 border-t border-white/10 bg-black/30">
+                      <button
+                        onClick={() => { setNotificationOpen(false); navigate('/dashboard'); }}
+                        className="metal-button w-full py-2 rounded-xl text-xs font-semibold text-white transition-colors"
+                      >
+                        Manage Subscription
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </header>

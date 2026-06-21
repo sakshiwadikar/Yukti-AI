@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Bot, Code2, Copy, Loader2, Sparkles } from 'lucide-react';
-import { generateCode } from '../../../services/code';
+import { generateCode, saveCodeHistory } from '../../../services/code';
+import { trackActivity } from '../../../services/activity';
 
 export default function CodeAssistant() {
   const [prompt, setPrompt] = useState('');
@@ -22,6 +23,9 @@ export default function CodeAssistant() {
     try {
       const result = await generateCode({ prompt: prompt.trim() });
       setResponse(result);
+      // Persist code history and track as recent activity
+      void saveCodeHistory(prompt.trim(), result);
+      void trackActivity('code', prompt.trim());
     } catch (requestError) {
       const message =
         requestError?.response?.data?.error ||

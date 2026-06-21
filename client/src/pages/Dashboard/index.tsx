@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { 
   MessageSquare, 
   Image as ImageIcon, 
@@ -10,6 +11,8 @@ import {
   Zap
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getRecentActivities, type RecentActivityRecord } from '../../services/activity';
+import { getUser } from '../../utils/auth';
 
 const quickActions = [
   { 
@@ -56,8 +59,57 @@ const quickActions = [
   },
 ];
 
+const MODULE_CONFIG: Record<string, { label: string; icon: typeof MessageSquare; path: string }> = {
+  chat: { label: 'Chat AI', icon: MessageSquare, path: '/chat' },
+  image: { label: 'Image Gen', icon: ImageIcon, path: '/images' },
+  brainstorm: { label: 'Brainstorm', icon: Lightbulb, path: '/brainstorm' },
+  code: { label: 'Code Assistant', icon: Code, path: '/code' },
+  writing: { label: 'Writing', icon: PenTool, path: '/writing' },
+};
+
+const formatRelativeTime = (timestamp: string): string => {
+  const now = Date.now();
+  const then = new Date(timestamp).getTime();
+  const diffMs = now - then;
+  const diffSecs = Math.floor(diffMs / 1000);
+  const diffMins = Math.floor(diffSecs / 60);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffSecs < 60) return 'Just now';
+  if (diffMins < 60) return `${diffMins} min${diffMins !== 1 ? 's' : ''} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays} days ago`;
+  return new Date(timestamp).toLocaleDateString();
+};
+
+const defaultActivities = [
+  { title: 'React Performance Optimization', type: 'Chat AI', time: '2 mins ago', icon: MessageSquare, path: '/chat' },
+  { title: 'Cyberpunk Cityscape Concept', type: 'Image Gen', time: '1 hour ago', icon: ImageIcon, path: '/images' },
+  { title: 'API Authentication Flow', type: 'Code Assistant', time: '3 hours ago', icon: Code, path: '/code' },
+  { title: 'Marketing Email Draft', type: 'Writing', time: 'Yesterday', icon: PenTool, path: '/writing' },
+];
+
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [activities, setActivities] = useState<RecentActivityRecord[]>([]);
+
+  useEffect(() => {
+    const user = getUser();
+    if (!user?.id) return;
+
+    const loadActivities = async () => {
+      try {
+        const data = await getRecentActivities();
+        setActivities(data);
+      } catch (error) {
+        console.error('Failed to load recent activities:', error);
+      }
+    };
+
+    void loadActivities();
+  }, []);
 
   return (
     <div className="space-y-8 pb-10 depth-section rounded-[28px] p-4 sm:p-6">
@@ -79,7 +131,7 @@ export default function Dashboard() {
           <p className="text-lg text-gray-400 mb-8 max-w-2xl leading-relaxed">
             Harness the power of multiple AI models in one unified platform. Choose an action below or jump right back into your recent projects.
           </p>
-          <button className="metal-button text-white px-6 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2 group">
+          <button onClick={() => navigate('/chat')} className="metal-button text-white px-6 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2 group">
             <Zap className="w-5 h-5 text-primary" />
             Quick Start
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -124,23 +176,58 @@ export default function Dashboard() {
           <h2 className="text-xl font-bold heading-metal">Recent Activity</h2>
           <div className="glass-card overflow-hidden">
             <ul className="divide-y divide-border">
-              {[
-                { title: 'React Performance Optimization', type: 'Chat AI', time: '2 mins ago', icon: MessageSquare },
-                { title: 'Cyberpunk Cityscape Concept', type: 'Image Gen', time: '1 hour ago', icon: ImageIcon },
-                { title: 'API Authentication Flow', type: 'Code Assistant', time: '3 hours ago', icon: Code },
-                { title: 'Marketing Email Draft', type: 'Writing', time: 'Yesterday', icon: PenTool },
-              ].map((item, i) => (
-                <li key={i} className="p-4 hover:bg-white/5 cursor-pointer transition-colors flex items-center gap-4">
-                  <div className="p-2 rounded-lg bg-black/30 border border-white/10 backdrop-blur-sm">
-                    <item.icon className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">{item.title}</p>
-                    <p className="text-xs text-gray-500 truncate">{item.type}</p>
-                  </div>
-                  <span className="text-xs text-gray-500 whitespace-nowrap">{item.time}</span>
-                </li>
-              ))}
+              {Array.from({ length: 4 }).map((_, index) => {
+                const item = activities[index];
+                
+                if (item) {
+                  const config = MODULE_CONFIG[item.module] || {
+                    label: item.module,
+                    icon: MessageSquare,
+                    path: '/dashboard',
+                  };
+                  const Icon = config.icon;
+                  return (
+                    <li
+                      key={item.id}
+                      onClick={() => navigate(config.path)}
+                      className="p-4 hover:bg-white/5 cursor-pointer transition-colors flex items-center gap-4"
+                    >
+                      <div className="p-2 rounded-lg bg-black/30 border border-white/10 backdrop-blur-sm">
+                        <Icon className="w-5 h-5 text-gray-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-white truncate">{item.activity}</p>
+                        <p className="text-xs text-gray-500 truncate">{config.label}</p>
+                      </div>
+                      <span className="text-xs text-gray-500 whitespace-nowrap">
+                        {formatRelativeTime(item.timestamp)}
+                      </span>
+                    </li>
+                  );
+                }
+
+                // Fallback to exactly the original 4 items if not enough DB data
+                const fallback = defaultActivities[index];
+                const FallbackIcon = fallback.icon;
+                return (
+                  <li
+                    key={`fallback-${index}`}
+                    onClick={() => navigate(fallback.path)}
+                    className="p-4 hover:bg-white/5 cursor-pointer transition-colors flex items-center gap-4"
+                  >
+                    <div className="p-2 rounded-lg bg-black/30 border border-white/10 backdrop-blur-sm">
+                      <FallbackIcon className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-white truncate">{fallback.title}</p>
+                      <p className="text-xs text-gray-500 truncate">{fallback.type}</p>
+                    </div>
+                    <span className="text-xs text-gray-500 whitespace-nowrap">
+                      {fallback.time}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </section>
@@ -191,3 +278,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

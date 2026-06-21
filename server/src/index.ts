@@ -1,11 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-
-// 1. Load Environment Variables
-dotenv.config();
+import { serverEnv } from './config/env';
 
 import apiRoutes from './routes';
 import chatRoutes from './routes/chat';
@@ -54,7 +51,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = serverEnv.PORT;
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

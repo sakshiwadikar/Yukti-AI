@@ -1,12 +1,9 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { serverEnv } from '../../config/env';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = serverEnv.JWT_SECRET;
 const JWT_EXPIRY = '7d';
-
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET is not configured');
-}
 
 export interface AuthPayload {
   id: string;

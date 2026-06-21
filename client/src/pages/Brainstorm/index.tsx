@@ -21,6 +21,7 @@ import {
   type Difficulty,
   type StudyMode
 } from '../../services/brainstorm';
+import { trackActivity } from '../../services/activity';
 
 const DIFFICULTIES: Difficulty[] = ['Easy', 'Medium', 'Hard'];
 const STUDY_MODES: StudyMode[] = ['Quick Revision Mode', 'Practice Mode', 'Challenge Mode'];
@@ -136,6 +137,8 @@ export default function BrainstormPage() {
 
       setActiveResult(record);
       setHistory((prev) => [record, ...prev.filter((item) => item.id !== record.id)]);
+      // Track as the most recent brainstorm activity
+      void trackActivity('brainstorm', topic.trim() || pastedContent.trim().slice(0, 100) || 'Brainstorm session');
     } catch (requestError) {
       setError(asErrorMessage(requestError, 'Failed to generate brainstorm content.'));
     } finally {

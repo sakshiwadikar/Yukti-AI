@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Copy, FilePenLine, Loader2, Sparkles } from 'lucide-react';
 import { axiosInstance } from '../utils/axiosInstance';
+import { saveWritingHistory } from '../services/writing';
+import { trackActivity } from '../services/activity';
 
 const MODES = [
   'Rewrite',
@@ -56,6 +58,9 @@ export default function WritingAssistant() {
       }
 
       setResponse(data.response || 'No output generated.');
+      // Persist writing history and track as recent activity
+      void saveWritingHistory(text.trim(), mode, data.response || '');
+      void trackActivity('writing', text.trim());
     } catch (requestError) {
       const message =
         requestError?.response?.data?.error ||

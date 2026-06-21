@@ -6,6 +6,8 @@ import codeRoutes from './code';
 import solverRoutes from './solverRoutes';
 import writingRoutes from './writingRoutes';
 import brainstormRoutes from './brainstorm';
+import activityRoutes from './activityRoutes';
+import historyRoutes from './historyRoutes';
 
 const router = Router();
 
@@ -16,5 +18,8 @@ router.use('/code', codeRoutes);
 router.use('/solver', solverRoutes);
 router.use('/writing', writingRoutes);
 router.use('/brainstorm', brainstormRoutes);
+router.use('/activity', activityRoutes);
+router.use('/history', historyRoutes);
 
 export default router;
+

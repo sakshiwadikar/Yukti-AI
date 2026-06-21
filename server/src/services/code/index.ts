@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { requireGroqApiKey } from '../../config/env';
 
 interface GenerateCodeInput {
   prompt: string;
@@ -8,11 +9,7 @@ const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
 
 export const generateCodeFromPrompt = async ({ prompt }: GenerateCodeInput): Promise<string> => {
-  const apiKey = process.env.GROQ_API_KEY;
-
-  if (!apiKey) {
-    throw new Error('GROQ_API_KEY is not configured');
-  }
+  const apiKey = requireGroqApiKey();
 
   const response = await axios.post(
     GROQ_API_URL,

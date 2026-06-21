@@ -15,6 +15,7 @@ import axios from 'axios';
 import { cn } from '../../utils/theme';
 import ChatInput from '../../components/chat/ChatInput';
 import { getToken, getUser } from '../../utils/auth';
+import { trackActivity } from '../../services/activity';
 
 const MOCK_CONVERSATIONS = [
   { id: '1', title: 'React Performance Tips', date: 'Today' },
@@ -345,6 +346,9 @@ export default function ChatPage() {
         userId: currentUser.id,
       };
 
+      // Track this chat as the most recent activity for the dashboard
+      void trackActivity('chat', message);
+
       setInput('');
       setIsTyping(true);
 
@@ -573,12 +577,11 @@ export default function ChatPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="p-4 sm:p-6 bg-gradient-to-t from-background via-background/50 to-transparent">
+        <div className="p-4 sm:p-6 pb-4">
           <div className="max-w-3xl mx-auto relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-2xl blur-sm opacity-10 group-hover:opacity-20 transition duration-1000 group-hover:duration-200" />
             <ChatInput onSend={handleSend} isTyping={isTyping} disabled={!socket} prefillText={input} onTextChange={setInput} />
             <p className="text-center text-xs text-gray-500 mt-2">
-              Yukti AI uses real-time API streaming. Ensure your OPENAI_API_KEY is active.
+              Yukti AI uses real-time API streaming. Ensure your text-generation API key is active.
             </p>
           </div>
         </div>

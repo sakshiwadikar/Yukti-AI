@@ -119,7 +119,7 @@ export default function ChatInput({ onSend, isTyping, disabled, prefillText = ''
   };
 
   return (
-    <div className="relative flex flex-col gap-3 glass-card rounded-xl p-2">
+    <div className="relative flex flex-col gap-3 bg-black/20 border border-white/10 rounded-2xl p-2">
       <AttachmentPreview
         attachments={attachments}
         audioPreviewUrl={audioPreviewUrl}

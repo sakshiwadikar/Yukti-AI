@@ -363,6 +363,279 @@
   :root[data-theme='light'] select {
     color: #1f2937 !important;
   }
+
+  /* ===== COMPREHENSIVE LIGHT MODE OVERRIDES ===== */
+
+  /* --- Global text color overrides --- */
+  :root[data-theme='light'] .text-white {
+    color: #1f2937 !important;
+  }
+
+  :root[data-theme='light'] .text-gray-100 {
+    color: #374151 !important;
+  }
+
+  :root[data-theme='light'] .text-gray-200 {
+    color: #4b5563 !important;
+  }
+
+  :root[data-theme='light'] .text-gray-300 {
+    color: #6b7280 !important;
+  }
+
+  :root[data-theme='light'] .text-gray-400 {
+    color: #6b7280 !important;
+  }
+
+  :root[data-theme='light'] .text-gray-500 {
+    color: #9ca3af !important;
+  }
+
+  /* --- Background overlay overrides --- */
+  :root[data-theme='light'] .bg-black\/20 {
+    background-color: rgba(255, 255, 255, 0.55) !important;
+  }
+
+  :root[data-theme='light'] .bg-black\/25 {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+  }
+
+  :root[data-theme='light'] .bg-black\/30 {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+  }
+
+  :root[data-theme='light'] .bg-black\/35 {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+  }
+
+  :root[data-theme='light'] .bg-black\/40 {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }
+
+  :root[data-theme='light'] .bg-black\/50 {
+    background-color: rgba(0, 0, 0, 0.06) !important;
+  }
+
+  /* --- White background overlays --- */
+  :root[data-theme='light'] .bg-white\/5 {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+  }
+
+  :root[data-theme='light'] .bg-white\/10 {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* --- Border overrides --- */
+  :root[data-theme='light'] .border-white\/10 {
+    border-color: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  :root[data-theme='light'] .border-white\/15 {
+    border-color: rgba(0, 0, 0, 0.12) !important;
+  }
+
+  :root[data-theme='light'] .border-white\/20 {
+    border-color: rgba(0, 0, 0, 0.15) !important;
+  }
+
+  :root[data-theme='light'] .border-white\/25 {
+    border-color: rgba(0, 0, 0, 0.15) !important;
+  }
+
+  :root[data-theme='light'] .divide-border > * + * {
+    border-color: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* --- Header bar --- */
+  :root[data-theme='light'] header[class*='bg-[rgba(10,12,20'] {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(20px);
+    border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+  }
+
+  /* --- Chat page header bar --- */
+  :root[data-theme='light'] [class*='bg-[rgba(12,14,24'] {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(20px);
+  }
+
+  /* --- Chat sidebar and panel backgrounds --- */
+  :root[data-theme='light'] .backdrop-blur-2xl[class*='bg-black\/20'] {
+    background: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  /* --- Hover states --- */
+  :root[data-theme='light'] .hover\:bg-white\/5:hover {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+  }
+
+  :root[data-theme='light'] .hover\:bg-white\/10:hover {
+    background-color: rgba(0, 0, 0, 0.06) !important;
+  }
+
+  :root[data-theme='light'] .hover\:bg-black\/60:hover {
+    background-color: rgba(0, 0, 0, 0.06) !important;
+  }
+
+  :root[data-theme='light'] .hover\:text-white:hover {
+    color: #111827 !important;
+  }
+
+  /* --- Active sidebar items --- */
+  :root[data-theme='light'] .glass-sidebar-item.bg-white\/10 {
+    background: rgba(59, 130, 246, 0.1) !important;
+    border-color: rgba(59, 130, 246, 0.2) !important;
+  }
+
+  :root[data-theme='light'] .glass-sidebar-item.text-white {
+    color: #1f2937 !important;
+  }
+
+  /* --- Usage progress bar backgrounds --- */
+  :root[data-theme='light'] .bg-black\/40.h-1\.5,
+  :root[data-theme='light'] .bg-black\/50.h-2 {
+    background-color: rgba(0, 0, 0, 0.08) !important;
+  }
+
+  /* --- Chat message bubbles --- */
+  :root[data-theme='light'] .glass-card.text-gray-200 {
+    color: #374151 !important;
+  }
+
+  /* --- Image gen panel --- */
+  :root[data-theme='light'] [class*='bg-black\/35'][class*='flex-1'] {
+    background-color: rgba(248, 249, 255, 0.8) !important;
+  }
+
+  /* --- Brainstorm / Solver / Writing inner cards --- */
+  :root[data-theme='light'] article[class*='border-white\/15'][class*='bg-black\/20'],
+  :root[data-theme='light'] li[class*='border-white\/15'][class*='bg-black\/20'],
+  :root[data-theme='light'] div[class*='border-white\/15'][class*='bg-black\/20'] {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* --- Solver output section --- */
+  :root[data-theme='light'] .bg-black\/25[class*='border-white\/10'] {
+    background-color: rgba(0, 0, 0, 0.02) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+  }
+
+  /* --- Notification badge pulse color --- */
+  :root[data-theme='light'] .bg-primary.animate-pulse {
+    box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
+  }
+
+  /* --- Auth screen overrides --- */
+  :root[data-theme='light'] .depth-section .text-white {
+    color: #1f2937 !important;
+  }
+
+  /* --- Error message readability --- */
+  :root[data-theme='light'] .text-red-200 {
+    color: #dc2626 !important;
+  }
+
+  :root[data-theme='light'] .border-red-500\/30 {
+    border-color: rgba(220, 38, 38, 0.3) !important;
+  }
+
+  :root[data-theme='light'] .bg-red-500\/10 {
+    background-color: rgba(220, 38, 38, 0.08) !important;
+  }
+
+  /* --- Primary colored text should remain visible --- */
+  :root[data-theme='light'] .text-primary {
+    color: hsl(217.2, 91.2%, 49.8%) !important;
+  }
+
+  /* --- Dropdown menus --- */
+  :root[data-theme='light'] .glass-card[class*='shadow-xl'] {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+  }
+
+  :root[data-theme='light'] .hover\:bg-primary\/20:hover {
+    background-color: rgba(59, 130, 246, 0.12) !important;
+  }
+
+  /* --- Disabled states --- */
+  :root[data-theme='light'] .disabled\:opacity-50:disabled,
+  :root[data-theme='light'] .disabled\:opacity-40:disabled,
+  :root[data-theme='light'] .disabled\:opacity-55:disabled,
+  :root[data-theme='light'] .disabled\:opacity-60:disabled {
+    opacity: 0.45 !important;
+  }
+
+  /* --- PRO badge in sidebar --- */
+  :root[data-theme='light'] .glass-card h4.font-semibold {
+    color: #1f2937 !important;
+  }
+
+  :root[data-theme='light'] .glass-card .text-xs.text-gray-400 {
+    color: #6b7280 !important;
+  }
+
+  /* --- User info in sidebar --- */
+  :root[data-theme='light'] .text-sm.font-medium.text-white.truncate {
+    color: #1f2937 !important;
+  }
+
+  :root[data-theme='light'] .text-xs.text-gray-400.truncate {
+    color: #6b7280 !important;
+  }
+
+  /* --- ambient glow toning for light mode --- */
+  :root[data-theme='light'] body::before {
+    background:
+      radial-gradient(circle at 15% 65%, rgba(59, 130, 246, 0.06), transparent 40%),
+      radial-gradient(circle at 85% 12%, rgba(139, 92, 246, 0.04), transparent 42%);
+    animation: ambientGlow 9s ease-in-out infinite;
+  }
+
+  /* --- Writing / Solver output pre blocks --- */
+  :root[data-theme='light'] pre[class*='bg-black\/35'] {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #374151 !important;
+  }
+
+  /* --- Chat gradient footer --- */
+  :root[data-theme='light'] .from-background {
+    --tw-gradient-from: rgba(248, 249, 255, 0.95) !important;
+  }
+
+  :root[data-theme='light'] .via-background\/50 {
+    --tw-gradient-via: rgba(248, 249, 255, 0.5) !important;
+  }
+
+  /* --- Notification panel --- */
+  .notification-panel {
+    background: rgba(10, 12, 20, 0.96) !important;
+    backdrop-filter: blur(30px) !important;
+  }
+
+  :root[data-theme='light'] .notification-panel {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+  }
+
+  :root[data-theme='light'] .notification-panel .text-white {
+    color: #1f2937 !important;
+  }
+
+  :root[data-theme='light'] .notification-panel .text-gray-300,
+  :root[data-theme='light'] .notification-panel .text-gray-400 {
+    color: #6b7280 !important;
+  }
+
+  :root[data-theme='light'] .notification-panel .border-white\/10 {
+    border-color: rgba(0, 0, 0, 0.08) !important;
+  }
+
+  :root[data-theme='light'] .notification-panel .bg-black\/30 {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+  }
 }
 
 @keyframes float {

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 import { generateWritingPrompt, WRITING_SYSTEM_PROMPT, WritingMode } from '../utils/writingPrompt';
+import { requireGroqApiKey } from '../config/env';
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
@@ -28,11 +29,8 @@ export const generateWriting = async (req: Request, res: Response) => {
     });
   }
 
-  if (!process.env.GROQ_API_KEY) {
-    return res.status(500).json({ success: false, error: 'GROQ_API_KEY is not configured' });
-  }
-
   try {
+    const apiKey = requireGroqApiKey();
     const userPrompt = generateWritingPrompt(text, mode);
 
     const response = await axios.post(
@@ -54,7 +52,7 @@ export const generateWriting = async (req: Request, res: Response) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
         },
         timeout: 30000

@@ -76,7 +76,12 @@ const createUser = async (name: string, email: string, passwordHash: string): Pr
       name: user.name || 'User',
       passwordHash: user.passwordHash || passwordHash
     };
-  } catch (error) {
+  } catch (error: any) {
+    // Handle unique constraint violation (race condition: duplicate signup)
+    if (error?.code === 'P2002') {
+      throw Object.assign(new Error('Email already in use'), { statusCode: 409 });
+    }
+
     if (isDbUnavailable(error)) {
       const memoryUser: AuthUser = {
         id: `mem_${Date.now()}`,
@@ -101,7 +106,9 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    const user = await findUserByEmail(email);
+    const normalizedEmail = String(email).trim().toLowerCase();
+
+    const user = await findUserByEmail(normalizedEmail);
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
@@ -143,13 +150,20 @@ router.post('/register', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
-    const existingUser = await findUserByEmail(email);
+    const normalizedEmail = String(email).trim().toLowerCase();
+
+    // Basic email format validation
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      return res.status(400).json({ error: 'Please provide a valid email address' });
+    }
+
+    const existingUser = await findUserByEmail(normalizedEmail);
     if (existingUser) {
       return res.status(409).json({ error: 'Email already in use' });
     }
 
     const passwordHash = await hashPassword(password);
-    const newUser = await createUser(name, email, passwordHash);
+    const newUser = await createUser(name, normalizedEmail, passwordHash);
 
     const token = generateToken({
       id: newUser.id,

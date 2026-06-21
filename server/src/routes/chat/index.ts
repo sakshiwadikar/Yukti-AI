@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { io } from '../../index';
 import OpenAI from 'openai';
 import multer from 'multer';
+import { getTextGenerationProvider } from '../../config/env';
 
 const router = Router();
 const upload = multer({
@@ -25,8 +26,8 @@ const isAllowedAttachment = (mimeType: string) => {
   return allowedMimeTypes.has(mimeType);
 };
 
-const mapModel = (requestedModel: string) => {
-  if (process.env.GROQ_API_KEY) {
+const mapModel = (requestedModel: string, provider: 'Groq' | 'OpenAI') => {
+  if (provider === 'Groq') {
     if (requestedModel.includes('Fast') || requestedModel.includes('3.5')) return 'llama-3.1-8b-instant';
     return 'llama-3.3-70b-versatile';
   }
@@ -45,21 +46,25 @@ const streamAssistantResponse = async ({
   model: string;
   socketId: string;
 }) => {
-  if (!process.env.OPENAI_API_KEY && !process.env.GROQ_API_KEY) {
+  let providerConfig: ReturnType<typeof getTextGenerationProvider>;
+
+  try {
+    providerConfig = getTextGenerationProvider();
+  } catch (error: any) {
     setTimeout(() => {
-      io.to(socketId).emit('chat:stream', 'Error: OPENAI_API_KEY or GROQ_API_KEY is not configured in the backend.');
+      io.to(socketId).emit('chat:stream', `Error: ${error?.message || 'OPENAI_API_KEY or GROQ_API_KEY is not configured in the backend.'}`);
       io.to(socketId).emit('chat:end');
     }, 500);
     return;
   }
 
   const client = new OpenAI({
-    apiKey: process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY,
-    baseURL: process.env.GROQ_API_KEY ? 'https://api.groq.com/openai/v1' : undefined,
+    apiKey: providerConfig.apiKey,
+    baseURL: providerConfig.baseURL,
   });
 
   const stream = await client.chat.completions.create({
-    model: mapModel(model || ''),
+    model: mapModel(model || '', providerConfig.provider),
     messages: [{ role: 'user', content: message }],
     stream: true,
   });

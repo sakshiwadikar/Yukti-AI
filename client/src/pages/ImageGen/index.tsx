@@ -8,7 +8,8 @@ import {
   Loader2
 } from 'lucide-react';
 import { cn } from '../../utils/theme';
-import { generateImage } from '../../services/image';
+import { generateImage, saveImageHistory } from '../../services/image';
+import { trackActivity } from '../../services/activity';
 
 const STYLES = ['Photorealistic', 'Anime', 'Digital Art', '3D Render', 'Cyberpunk', 'Watercolor'];
 const DIMENSIONS = ['1024x1024', '16:9 (1920x1080)', '9:16 (1080x1920)'];
@@ -36,6 +37,9 @@ export default function ImageGenPage() {
         dimension: selectedDim
       });
       setGeneratedImage(image);
+      // Persist image history and track as recent activity
+      void saveImageHistory(prompt, image);
+      void trackActivity('image', prompt);
     } catch (error: any) {
       const message = error?.response?.data?.error || error?.message || 'Failed to generate image';
       setErrorMessage(message);

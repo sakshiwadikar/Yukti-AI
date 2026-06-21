@@ -3,6 +3,7 @@ import * as pdfParse from 'pdf-parse';
 import mammoth from 'mammoth';
 import type { Express } from 'express';
 import { prisma } from '../../utils/prisma';
+import { getTextGenerationProvider } from '../../config/env';
 
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 export type StudyMode = 'Quick Revision Mode' | 'Practice Mode' | 'Challenge Mode';
@@ -160,19 +161,13 @@ const getTopicStructureGuidance = (topic: string): string => {
 };
 
 const getClient = (): OpenAI => {
-  const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error('OPENAI_API_KEY or GROQ_API_KEY is not configured');
-  }
+  const { apiKey, baseURL } = getTextGenerationProvider();
 
-  return new OpenAI({
-    apiKey,
-    baseURL: process.env.GROQ_API_KEY ? 'https://api.groq.com/openai/v1' : undefined
-  });
+  return new OpenAI({ apiKey, baseURL });
 };
 
 const getModel = (): string => {
-  return process.env.GROQ_API_KEY ? GROQ_MODEL : OPENAI_MODEL;
+  return getTextGenerationProvider().provider === 'Groq' ? GROQ_MODEL : OPENAI_MODEL;
 };
 
 const stripCodeFence = (input: string): string => {

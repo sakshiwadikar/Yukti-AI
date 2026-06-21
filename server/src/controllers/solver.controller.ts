@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 import { generateSolverPrompt, SolverMode } from '../utils/solverPrompt';
+import { requireGroqApiKey } from '../config/env';
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
@@ -25,11 +26,8 @@ export const solveProblem = async (req: Request, res: Response) => {
     return res.status(400).json({ success: false, error: 'mode must be one of Math, DSA, DBMS, Aptitude, Conversion' });
   }
 
-  if (!process.env.GROQ_API_KEY) {
-    return res.status(500).json({ success: false, error: 'GROQ_API_KEY is not configured' });
-  }
-
   try {
+    const apiKey = requireGroqApiKey();
     const userPrompt = generateSolverPrompt(problem, mode);
 
     const response = await axios.post(
@@ -51,7 +49,7 @@ export const solveProblem = async (req: Request, res: Response) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
         },
         timeout: 30000
