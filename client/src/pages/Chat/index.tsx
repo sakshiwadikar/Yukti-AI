@@ -16,6 +16,7 @@ import { cn } from '../../utils/theme';
 import ChatInput from '../../components/chat/ChatInput';
 import { getToken, getUser } from '../../utils/auth';
 import { trackActivity } from '../../services/activity';
+import { getApiBaseUrl } from '../../config/env';
 
 const MOCK_CONVERSATIONS = [
   { id: '1', title: 'React Performance Tips', date: 'Today' },
@@ -74,7 +75,14 @@ const INITIAL_MESSAGES: ChatMessage[] = [
   },
 ];
 
-const API_BASE_URL = 'http://localhost:5000';
+const getApiRootFromBase = (baseURL: string) => {
+  if (!baseURL) {
+    return 'http://localhost:5000';
+  }
+  return baseURL.replace(/\/api\/v1\/?$/, '');
+};
+
+const API_BASE_URL = getApiRootFromBase(getApiBaseUrl());
 
 const toUiMessages = (messages: PersistedMessage[]): ChatMessage[] => {
   return messages.map((message, index) => ({
@@ -202,8 +210,8 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
-    // Initialize Socket connection
-    const newSocket = io('http://localhost:5000');
+        // Initialize Socket connection
+    const newSocket = io(API_BASE_URL);
     setSocket(newSocket);
 
     newSocket.on('connect', () => {
