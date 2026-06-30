@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCtiMX0DgZl8Qoy5WfoP8vizlFgs_eUrWw",
-  authDomain: "yukti-ai-123.firebaseapp.com",
-  projectId: "yukti-ai-123",
-  storageBucket: "yukti-ai-123.firebasestorage.app",
-  messagingSenderId: "908278554518",
-  appId: "1:908278554518:web:6a8a2a37b2b787c1a7c7b7",
-  measurementId: "G-J4X9W2R5TW"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
